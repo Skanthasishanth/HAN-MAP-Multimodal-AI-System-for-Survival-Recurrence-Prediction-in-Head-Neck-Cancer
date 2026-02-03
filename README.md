@@ -213,16 +213,19 @@ python inference/predict.py --input features.h5
 **Kantha Sishanth S**
 
 B.E. Computer Science & Engineering (CS)
+
 Saveetha Engineering College, Chennai
 
 **Perarasu M**
 
 B.E. Computer Science & Engineering (CS)
+
 Saveetha Engineering College, Chennai
 
 **Santhosh S**
 
 B.E. Computer Science & Engineering (CS)
+
 Saveetha Engineering College, Chennai
 
 ---
