@@ -6,49 +6,49 @@
 
 ## 📌 Overview
 
-HAN-MAP (**Head And Neck – Multimodal AI Prediction**) is an advanced multimodal deep learning framework designed to predict **5-year survival** and **2-year recurrence** outcomes for patients with **Head & Neck Cancer**.
+HAN-MAP (**Head And Neck – Multimodal AI Prediction**) is a comprehensive **multimodal deep learning framework** designed to predict **5-year overall survival** and **2-year cancer recurrence** in patients diagnosed with **Head & Neck Cancer**.
 
-The system integrates **five heterogeneous clinical modalities** into a unified, uncertainty-aware predictive pipeline using **Variational Autoencoders (VAE)** and a **Hierarchical Cross-modal Attention Transformer (HCAT)** architecture.
+The system integrates **five heterogeneous medical data modalities** into a single, uncertainty-aware predictive pipeline using **Variational Autoencoders (VAEs)** and a **Hierarchical Cross-modal Attention Transformer (HCAT)** architecture. By jointly modeling diverse clinical evidence, HAN-MAP captures complex inter-modal relationships that are often missed by traditional single-modality approaches.
 
-This project was developed as part of **Project Work – Phase II** and is inspired by real-world clinical challenges in precision oncology, leveraging the **HANCOCK multimodal cancer dataset**.
+This project was developed as part of **Project Work – Phase II**, motivated by real-world challenges in precision oncology, and evaluated using the **HANCOCK multimodal head and neck cancer dataset**.
 
 ---
 
 ## 🚀 Key Highlights
 
-* 🔗 **True Multimodal Fusion** (Clinical, Pathological, Semantic, Spatial, Temporal)
-* 🧠 **Advanced Imputation** using Joint Multimodal VAE + Graph Smoothing
-* 🎯 **Dual-Task Learning**: Survival & Recurrence prediction
-* ⚖️ **Uncertainty-Aware Modeling** with Quality Gates & Monte-Carlo Dropout
-* 🧩 **Hierarchical Transformer Fusion (HCAT)**
-* 📈 **State-of-the-art Performance**
+* 🔗 **True Multimodal Fusion** across Clinical, Pathological, Semantic, Spatial, and Temporal data
+* 🧠 **Advanced Missing-Data Handling** using Joint Multimodal VAEs and graph-based smoothing
+* 🎯 **Dual-Task Learning Framework** for survival and recurrence prediction
+* ⚖️ **Uncertainty-Aware Modeling** with quality gates and Monte Carlo dropout
+* 🧩 **Hierarchical Cross-modal Attention Transformer (HCAT)** for structured fusion
+* 📈 **Strong Predictive Performance** on real-world, sparse clinical data
 
-  * 5-Year Survival F1-score: **0.80**
-  * 2-Year Recurrence F1-score: **0.95**
+  * **5-Year Survival F1-score:** 0.80
+  * **2-Year Recurrence F1-score:** 0.95
 
 ---
 
 ## 🏥 Clinical Motivation
 
-Accurate prediction of cancer survival and recurrence is critical for:
+Accurate prediction of survival and recurrence is critical for effective cancer care, as it directly impacts:
 
 * Personalized treatment planning
-* Risk-adaptive follow-up strategies
-* Optimized healthcare resource allocation
+* Risk-adaptive follow-up and monitoring
+* Efficient allocation of healthcare resources
 
-Traditional ML systems rely on **single-modality data**, failing to capture the complex interactions between clinical history, pathology, imaging, lab results, and textual reports. HAN-MAP overcomes this limitation through **deep multimodal learning**.
+Conventional machine learning systems typically rely on **single-modality data**, limiting their ability to reflect the full clinical picture. HAN-MAP addresses this limitation by leveraging **deep multimodal learning**, enabling a more holistic and clinically meaningful representation of each patient.
 
 ---
 
 ## 🧬 Modalities Used
 
-| Modality      | Description                          | Encoder                     | Output |
-| ------------- | ------------------------------------ | --------------------------- | ------ |
-| Clinical      | Demographics & clinical attributes   | VAE + Denoising AE          | 512-D  |
-| Pathological  | Tumor & pathology features           | VAE + Graph Smoothing       | 512-D  |
-| Semantic Text | Free-text clinical & surgery reports | ClinicalBERT / TF-IDF + SVD | 512-D  |
-| Spatial       | Histopathology WSI patches           | Spatial Transformer         | 512-D  |
-| Temporal      | Blood test time-series               | Physiology-aware LSTM       | 512-D  |
+| Modality      | Description                                   | Encoder                     | Output |
+| ------------- | --------------------------------------------- | --------------------------- | ------ |
+| Clinical      | Demographics & structured clinical attributes | VAE + Denoising Autoencoder | 512-D  |
+| Pathological  | Tumor and pathology features                  | VAE + Graph Smoothing       | 512-D  |
+| Semantic Text | Free-text clinical and surgical reports       | ClinicalBERT / TF-IDF + SVD | 512-D  |
+| Spatial       | Histopathology WSI patch features             | Spatial Transformer         | 512-D  |
+| Temporal      | Longitudinal blood test records               | Physiology-aware LSTM       | 512-D  |
 
 ---
 
@@ -56,61 +56,60 @@ Traditional ML systems rely on **single-modality data**, failing to capture the 
 
 ### 1️⃣ Single-Modality Preprocessing
 
-Each modality undergoes **independent preprocessing** to handle sparsity, noise, and heterogeneity.
+Each modality is processed independently to address sparsity, noise, and heterogeneity:
 
-* **Structured Data (Clinical/Pathological)**
+* **Structured Clinical & Pathological Data**
 
-  * Ensemble imputation (Median → VAE → KNN)
-  * Patient graph smoothing (RBF kernel)
-  * Composite features: Mean + Variance + Missingness Mask
+  * Ensemble imputation (Median → KNN → VAE)
+  * Patient similarity graph smoothing (RBF kernel)
+  * Feature representation using mean, variance, and missingness masks
 
 * **Temporal Blood Data**
 
-  * Physiology-aware filling
-  * KNN refinement across cohort
-  * Denoising LSTM encoder
+  * Physiology-aware normalization
+  * Cohort-level KNN refinement
+  * Sequence encoding using denoising LSTM
 
 * **Spatial Histopathology (WSI)**
 
-  * Patch clustering (MiniBatch KMeans)
-  * Positional bias injection (coordinate MLP)
-  * Transformer aggregation + Monte-Carlo Dropout
+  * Patch-level clustering (MiniBatch K-Means)
+  * Positional bias injection via coordinate MLP
+  * Transformer-based aggregation with Monte Carlo dropout
 
-* **Semantic Text**
+* **Semantic Text Data**
 
-  * ClinicalBERT or TF-IDF + SVD embeddings
+  * Contextual embeddings using ClinicalBERT
+  * Lightweight fallback using TF-IDF + SVD
 
-All pipelines output **512-dimensional embeddings** per modality.
+All preprocessing pipelines generate standardized **512-dimensional embeddings** per modality.
 
 ---
 
 ### 2️⃣ Advanced Cross-Modal Imputation (JAMIE-style VAE)
 
-To handle **missing modalities**, HAN-MAP uses a **Joint Multimodal Variational Autoencoder**:
+To handle incomplete patient records, HAN-MAP employs a **Joint Multimodal Variational Autoencoder** that:
 
-* Learns a shared latent space across modalities
-* Uses cross-modal attention to synthesize missing embeddings
-* Outputs both **imputed features** and **uncertainty estimates**
-* Iteratively refined using Transformer layers
+* Learns a shared latent representation across all modalities
+* Uses cross-modal attention to infer missing embeddings
+* Estimates uncertainty for imputed features
+* Iteratively refines latent representations using transformer layers
 
-This ensures robust predictions even with incomplete patient data.
+This design ensures robust performance even when one or more modalities are missing.
 
 ---
 
 ### 3️⃣ Hierarchical Cross-modal Attention Transformer (HCAT)
 
-Key components:
+The fusion backbone consists of:
 
-* **Quality Gate** – dynamically down-weights uncertain or imputed modalities
-* **Modality Positional Encoding** – preserves modality identity
+* **Quality Gates** to down-weight unreliable or imputed modalities
+* **Modality Positional Encodings** to preserve modality identity
 * **Local Branch Transformers**
 
-  * Clinical ↔ Temporal
-  * Pathological ↔ Spatial
-* **Global Transformer Encoder** – holistic patient fusion
-* **Task-Specific Attention Routing**
-
-  * Separate heads for Survival & Recurrence
+  * Clinical ↔ Temporal fusion
+  * Pathological ↔ Spatial fusion
+* **Global Transformer Encoder** for holistic patient representation
+* **Task-Specific Attention Heads** for survival and recurrence prediction
 
 ---
 
@@ -118,16 +117,16 @@ Key components:
 
 HAN-MAP performs two binary classification tasks:
 
-| Task              | Description                        |
-| ----------------- | ---------------------------------- |
-| 5-Year Survival   | Predict long-term patient survival |
-| 2-Year Recurrence | Predict short-term cancer relapse  |
+| Task              | Description                                |
+| ----------------- | ------------------------------------------ |
+| 5-Year Survival   | Predict long-term patient survival outcome |
+| 2-Year Recurrence | Predict short-term cancer relapse risk     |
 
-Loss Functions:
+### Loss Functions
 
-* Focal Loss (class imbalance)
-* VAE KL + Reconstruction Loss
-* Contrastive InfoNCE Loss
+* Focal Loss for class imbalance
+* VAE reconstruction + KL divergence loss
+* Contrastive InfoNCE loss for representation learning
 
 ---
 
@@ -135,24 +134,21 @@ Loss Functions:
 
 | Task              | Best F1-score |
 | ----------------- | ------------- |
-| 5-Year Survival   | **0.80**      |
-| 2-Year Recurrence | **0.95**      |
+| 5-Year Survival   | 0.80          |
+| 2-Year Recurrence | 0.95          |
 | **Average**       | **0.875**     |
 
-The system demonstrates excellent generalization and robustness on sparse clinical data.
+These results demonstrate strong generalization and robustness on sparse, real-world multimodal clinical data.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Language**: Python 3.9+
-* **Frameworks**: PyTorch, scikit-learn
-* **Libraries**:
-
-  * NumPy, Pandas, h5py
-  * Transformers (HuggingFace)
-  * TorchVision
-* **Optional**: Docker for deployment
+* **Programming Language:** Python 3.9+
+* **Deep Learning Frameworks:** PyTorch, scikit-learn
+* **Libraries:** NumPy, Pandas, h5py, TorchVision, HuggingFace Transformers
+* **Hardware:** CUDA-enabled GPU recommended
+* **Deployment (Optional):** Docker
 
 ---
 
@@ -176,13 +172,10 @@ HAN-MAP/
 ## ▶️ Usage (High-Level)
 
 ```bash
-# Install dependencies
 pip install -r requirements.txt
 
-# Train model
 python training/train_hcat.py
 
-# Run inference
 python inference/predict.py --input features.h5
 ```
 
@@ -190,27 +183,28 @@ python inference/predict.py --input features.h5
 
 ## 🔒 Ethics & Data Privacy
 
-* Designed with **HIPAA/GDPR compliance** in mind
-* Supports encrypted storage & controlled access
-* Intended strictly for **research & clinical decision support**, not autonomous diagnosis
+* Designed with **HIPAA/GDPR-aligned principles**
+* Supports controlled access and encrypted storage
+* Intended strictly for **research and clinical decision support**
+* Not intended for autonomous medical diagnosis
 
 ---
 
 ## 🌍 Sustainable Development Goals (SDGs)
 
-* **SDG 3** – Good Health & Well-being
-* **SDG 9** – Industry, Innovation & Infrastructure
-* **SDG 10** – Reduced Inequalities
-* **SDG 17** – Partnerships for the Goals
+* **SDG 3:** Good Health & Well-being
+* **SDG 9:** Industry, Innovation & Infrastructure
+* **SDG 10:** Reduced Inequalities
+* **SDG 17:** Partnerships for the Goals
 
 ---
 
 ## 🔮 Future Work
 
-* End-to-end learning from **raw WSI images**
-* Integration of **genomics / proteomics** data
-* Explainable AI dashboards for clinicians
-* External validation on global oncology cohorts
+* End-to-end learning from raw whole-slide images (WSI)
+* Integration of genomics and proteomics data
+* Explainable AI (XAI) dashboards for clinicians
+* External validation on diverse oncology cohorts
 
 ---
 
@@ -232,7 +226,7 @@ Saveetha Engineering College, Chennai
 
 ## 📜 License
 
-This project is released for **academic and research use only**.
+Released for **academic and research use only**.
 Commercial usage requires explicit permission.
 
 ---
